@@ -140,7 +140,7 @@ Notifications.localNotification = function(details: Object) {
 			alertAction: details.alertAction,
 			category: details.category,
 			soundName: soundName,
-			applicationIconBadgeNumber: details.number,
+			applicationIconBadgeNumber: 0, //details.number,
 			userInfo: details.userInfo
 		});
 	} else {
@@ -172,7 +172,7 @@ Notifications.localNotificationSchedule = function(details: Object) {
 		};
 
 		if(details.number) {
-			iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
+			iosDetails.applicationIconBadgeNumber = 0//parseInt(details.number, 10);
 		}
 
 		// ignore Android only repeatType
