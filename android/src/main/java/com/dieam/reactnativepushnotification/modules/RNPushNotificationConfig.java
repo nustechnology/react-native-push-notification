@@ -12,6 +12,9 @@ class RNPushNotificationConfig {
     private static final String KEY_NOTIFICATION_DEFAULT_CHANNEL_ID = "com.dieam.reactnativepushnotification.default_notification_channel_id";
     private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
     private static final String KEY_NOTIFICATION_COLOR = "com.dieam.reactnativepushnotification.notification_color";
+    private static final String KEY_NOTIFICATION_FIREBASE_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
+    private static final String KEY_NOTIFICATION_FIREBASE_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
+
 
     private static Bundle metadata;
     private Context context;
@@ -76,5 +79,29 @@ class RNPushNotificationConfig {
         }
         // Default
         return "fcm_fallback_notification_channel";
+    }
+
+    public String getNotificationDefaultChannelName() {
+        try {
+            return getStringValue(KEY_NOTIFICATION_FIREBASE_CHANNEL_NAME,
+                    getStringValue(KEY_NOTIFICATION_FIREBASE_CHANNEL_NAME, "fcm_fallback_notification_channel")
+            );
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_FIREBASE_CHANNEL_NAME + " in manifest. Falling back to default");
+        }
+        // Default
+        return "fcm_fallback_notification_channel_name";
+    }
+
+    public String getNotificationDefaultChannelDescription() {
+        try {
+            return getStringValue(KEY_NOTIFICATION_FIREBASE_CHANNEL_DESCRIPTION,
+                    getStringValue(KEY_NOTIFICATION_FIREBASE_CHANNEL_DESCRIPTION, "fcm_fallback_notification_channel_description")
+            );
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_FIREBASE_CHANNEL_DESCRIPTION + " in manifest. Falling back to default");
+        }
+        // Default
+        return "fcm_fallback_notification_channel_description";
     }
 }

@@ -45,6 +45,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
@@ -172,17 +173,32 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
+        Log.d(LOG_TAG, String.format("Setting a notification 777 with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d(LOG_TAG, String.format("create a notification channnel with id %s at time %s",
+                    this.config.getNotificationDefaultChannelName(), this.config.getNotificationDefaultChannelId()));
+            CharSequence name = this.config.getNotificationDefaultChannelName();
+            String description = this.config.getNotificationDefaultChannelDescription();
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(this.config.getNotificationDefaultChannelId(), name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager manager = notificationManager();
+            manager.createNotificationChannel(channel);
+        }else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+                } else {
+                    getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+                }
             } else {
-                getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+                getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
             }
-        } else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         }
+
     }
 
 
